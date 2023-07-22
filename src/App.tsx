@@ -6,7 +6,12 @@ import { useState, useEffect } from 'react';
 type userType = {
   name: string,
   surname: string,
-  email: string
+  email: string,
+  id: number
+}
+
+function randomNumber() {
+  return Math.ceil(Math.random() * 1000000000000000);
 }
 
 function App() {
@@ -14,6 +19,7 @@ function App() {
     name: "",
     surname: "",
     email: "",
+    id: -1
   });
 
   const [users, setUsers] = useState<userType[]>([]);
@@ -22,40 +28,50 @@ function App() {
     const usersLS = localStorage.getItem('users');
     if (usersLS !== null) {
       const dataUsers: userType[] = JSON.parse(usersLS) as userType[];
-      dataUsers;
       setUsers(dataUsers);
-    }
 
-    users.map((user: userType, index) => {
-      createUser(user.name, user.surname, user.email, index)
-    })
+    }
+    console.log(users);
   }, [users])
 
-  const usersElements = users.map((user: userType, index) => createUser(user.name, user.surname, user.email, index));
+  const usersElements = users.map((user: userType) => {
+    return createUser(user.name, user.surname, user.email, user.id)
+  });
 
   function addUser(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
-    console.log('prevent')
+
+
+
     setUsers([
       ...users,
       formData
     ])
-    console.log(users)
 
     setFormData({
       name: "",
       surname: "",
       email: "",
+      id: -1
+    })
+  }
+
+  function deleteUser(ev: React.MouseEvent<HTMLButtonElement>, id: number) {
+    console.log(id)
+    console.log(ev.target)
+    setUsers((users) => {
+      return users.filter((user) => user.id !== id);
     })
   }
 
   function createUser(name: string, surname: string, email: string, id: number) {
+
     return (
-      <tr key={String(id)}>
+      <tr key={String(id)} id={String(id)}>
         <td>{name}</td>
         <td>{surname}</td>
         <td>{email}</td>
-        <td><button>delete</button></td>
+        <td><button onClick={(ev) => deleteUser(ev, id)}>delete</button></td>
       </tr>
     )
   }
@@ -64,7 +80,8 @@ function App() {
     const { name, value }: { name: string, value: string } = ev.target;
     setFormData(prevFormData => ({
       ...prevFormData,
-      [name]: value
+      [name]: value,
+      id: randomNumber()
     }))
   }
 
@@ -90,12 +107,6 @@ function App() {
         </thead>
         <tbody>
           {usersElements}
-          <tr>
-            <td>Иван</td>
-            <td>Иванов</td>
-            <td>Иван@mail.ru</td>
-            <td><button>delete</button></td>
-          </tr>
         </tbody>
       </table>
     </main>
