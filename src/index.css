@@ -1,18 +1,1 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-body {
-  background-color: #16262e;
-  color: #9fa2b2;
-}
-
-.title {
-  padding: 20px;
-}
+@import './App.css'
