@@ -9,46 +9,75 @@ type userType = {
   email: string
 }
 
-
-
 function App() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<userType>({
     name: "",
     surname: "",
     email: "",
-  })
+  });
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<userType[]>([]);
 
   useEffect(() => {
     const usersLS = localStorage.getItem('users');
     if (usersLS !== null) {
-      const dataUsers: userType[] = JSON.parse(usersLS);
-      setUsers(dataUsers)
+      const dataUsers: userType[] = JSON.parse(usersLS) as userType[];
+      dataUsers;
+      setUsers(dataUsers);
     }
+
+    users.map((user: userType, index) => {
+      createUser(user.name, user.surname, user.email, index)
+    })
   }, [users])
 
-  function createUser() {
+  const usersElements = users.map((user: userType, index) => createUser(user.name, user.surname, user.email, index));
+
+  function addUser(ev: React.FormEvent<HTMLFormElement>) {
+    ev.preventDefault();
+    console.log('prevent')
+    setUsers([
+      ...users,
+      formData
+    ])
+    console.log(users)
+
+    setFormData({
+      name: "",
+      surname: "",
+      email: "",
+    })
+  }
+
+  function createUser(name: string, surname: string, email: string, id: number) {
     return (
-      <tr>
-        <td>{formData.name}</td>
-        <td>{formData.surname}</td>
-        <td>{formData.email}</td>
+      <tr key={String(id)}>
+        <td>{name}</td>
+        <td>{surname}</td>
+        <td>{email}</td>
         <td><button>delete</button></td>
       </tr>
     )
+  }
+
+  function handleChange(ev: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value }: { name: string, value: string } = ev.target;
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [name]: value
+    }))
   }
 
   return (
     <main>
       <h1 className="title">User Management</h1>
 
-      <form className="form">
-        <input className="input" type="text" placeholder="Имя" value={formData.name} />
-        <input className="input" type="text" placeholder="Фамилия" value={formData.surname} />
-        <input className="input" type="email" placeholder="Email" value={formData.email} />
+      <form className="form" onSubmit={(ev) => addUser(ev)}>
+        <input className="input" type="text" name="name" placeholder="Имя" value={formData.name} onChange={(ev) => handleChange(ev)} />
+        <input className="input" type="text" name="surname" placeholder="Фамилия" value={formData.surname} onChange={(ev) => handleChange(ev)} />
+        <input className="input" type="email" name="email" placeholder="Email" value={formData.email} onChange={(ev) => handleChange(ev)} />
 
-        <button className="btn" onSubmit={createUser}>Добавить</button>
+        <button className="btn">Добавить</button>
       </form>
 
       <table className="table">
@@ -60,6 +89,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
+          {usersElements}
           <tr>
             <td>Иван</td>
             <td>Иванов</td>
