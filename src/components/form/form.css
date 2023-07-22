@@ -3,7 +3,6 @@
   gap: 20px;
   justify-content: center;
   margin-bottom: 20px;
-  ;
 }
 
 .input {
@@ -30,12 +29,25 @@
   color: #dbc2cf;
 }
 
-.btn:hover,
+.btn:hover:not(:disabled),
 .input:hover {
   opacity: 0.7;
+}
+
+.input:focus-visible {
+  border: none;
+  outline: none;
 }
 
 .btn,
 .input {
   transition: opacity .3s ease;
+}
+
+.error {
+  border: 1px solid red;
+}
+
+.btn:disabled {
+  background-color: grey;
 }
