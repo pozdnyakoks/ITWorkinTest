@@ -3,6 +3,10 @@
   overflow-x: scroll;
 }
 
+.table-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
 .table {
   margin: 0 auto;
   font-size: 25px;
