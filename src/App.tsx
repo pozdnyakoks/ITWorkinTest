@@ -22,16 +22,14 @@ function App() {
     id: -1
   });
 
-  const [users, setUsers] = useState<userType[]>([]);
+  const usersLS = localStorage.getItem('users')
+  const usersData = usersLS === null ? [] : JSON.parse(usersLS) as userType[];
+
+  const [users, setUsers] = useState<userType[]>(usersData);
+
 
   useEffect(() => {
-    const usersLS = localStorage.getItem('users');
-    if (usersLS !== null) {
-      const dataUsers: userType[] = JSON.parse(usersLS) as userType[];
-      setUsers(dataUsers);
-
-    }
-    console.log(users);
+    localStorage.setItem('users', JSON.stringify(users));
   }, [users])
 
   const usersElements = users.map((user: userType) => {
@@ -40,9 +38,6 @@ function App() {
 
   function addUser(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
-
-
-
     setUsers([
       ...users,
       formData
@@ -56,22 +51,19 @@ function App() {
     })
   }
 
-  function deleteUser(ev: React.MouseEvent<HTMLButtonElement>, id: number) {
-    console.log(id)
-    console.log(ev.target)
+  function deleteUser(id: number) {
     setUsers((users) => {
       return users.filter((user) => user.id !== id);
     })
   }
 
   function createUser(name: string, surname: string, email: string, id: number) {
-
     return (
       <tr key={String(id)} id={String(id)}>
         <td>{name}</td>
         <td>{surname}</td>
         <td>{email}</td>
-        <td><button onClick={(ev) => deleteUser(ev, id)}>delete</button></td>
+        <td><button onClick={() => deleteUser(id)}>delete</button></td>
       </tr>
     )
   }
